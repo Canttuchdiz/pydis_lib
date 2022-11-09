@@ -1,0 +1,24 @@
+{
+  "op": 2,
+  "d": {
+    "token": "",
+    "properties": {
+      "os": "windows",
+      "browser": "disco",
+      "device": "disco"
+    },
+    "compress": true,
+    "large_threshold": 250,
+    "shard": [0, 1],
+    "presence": {
+      "activities": [{
+        "name": "Fortnite",
+        "type": 0
+      }],
+      "status": "dnd",
+      "since": 91879201,
+      "afk": false
+    },
+    "intents": 7
+  }
+}
