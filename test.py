@@ -1,5 +1,10 @@
+import os
+
 from main import Client
+from dotenv import load_dotenv
+
+load_dotenv('.env')
 
 client = Client()
 
-client.run('ODI1NDY1MDc2NzkzMzQ0MDIw.GKHDT2.dcNhfcy5uk90VNWLoJhftclgfr6nMEkmPBktiU')
+client.run(os.getenv("TOKEN"))
