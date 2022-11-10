@@ -1,35 +1,17 @@
-import json
 import asyncio
-import aiofiles
 import aiohttp
+from .resources import Utility, UTILS_DIR, InvalidSessionError, IncorrectPayloadError
 from aiohttp import ClientWebSocketResponse
-import logging
-import zlib
-from time import sleep
+import json
 from typing import Optional
-from errors import *
 
 
-class Utility:
-
-    @staticmethod
-    def json_loader(filename : str, load : Optional[bool] = False) -> str:
-        with open(filename) as f:
-            m = f.read()
-            if load:
-                return json.loads(m)
-            return m
-
-
-
-
-
-class ClientHandling():
+class DiscordWebSocket():
 
     def __init__(self):
         self.token = ''
         self.interval = 0
-        self.data = Utility.json_loader('identifier.json', True)
+        self.data = Utility.json_loader(UTILS_DIR / 'jsons/identifier.json', True)
 
 
     async def _hello_handler(self, websocket : ClientWebSocketResponse) -> int:
@@ -45,17 +27,30 @@ class ClientHandling():
 
             await self._identification(ws)
 
-    def _compress(self, response):
-        return json.loads(zlib.decompress(response.data))["t"]
+    @property
+    def message_content(self, response : str, load : Optional[bool] = False):
+        data = response
+        if load:
+            data = json.loads(response)
+
+        try:
+            return data["d"]["content"]
+        except Exception as e:
+            return None
+
+
 
     async def _event_handler(self, ws : bytes):
         while not ws.closed:
             response = await self.poll_event(ws)
             if response.type == aiohttp.WSMsgType.TEXT:
+                if json.loads(response.data)["op"] == 9:
+                    raise InvalidSessionError()
                 print(response.data)
 
+
             elif response.type == aiohttp.WSMsgType.BINARY:
-                msg = self._compress(response)
+                msg = Utility._compress(response)
                 print(msg)
             else:
                 print(response)
@@ -70,16 +65,17 @@ class ClientHandling():
     async def _identification(self, ws):
 
         self.data["d"]["token"] = self.token
+
         try:
             await ws.send_json(self.data)
         except Exception as e:
             raise IncorrectPayloadError()
-
+        print("made it")
         asyncio.create_task(self._event_handler(ws))
         while not ws.closed:
             await self._heartbeat(interval=self.interval, ws=ws)
 
-
+    # async def push(self, )
 
     async def _heartbeat(self, interval: int, ws, d: str = "null") -> None:
 
@@ -91,14 +87,10 @@ class ClientHandling():
 
     def run(self, token : str):
 
-        setattr(self, 'token', token)
+        self.token = token
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._websocket())
         loop.run_forever()
 
-
-class Client(ClientHandling):
-
-    pass
 
