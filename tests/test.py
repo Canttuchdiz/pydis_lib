@@ -22,4 +22,3 @@ async def on_message_delete() -> None:
 
 
 client.run(os.getenv("TOKEN"))
-
