@@ -16,4 +16,4 @@ class Utility:
 
     @staticmethod
     def _compress(response : aiohttp.WSMessage) -> str:
-        return json.loads(zlib.decompress(response.data))["t"]
+        return json.loads(zlib.decompress(response.data))

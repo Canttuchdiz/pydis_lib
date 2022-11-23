@@ -3,25 +3,23 @@ import os
 import pydis
 from dotenv import load_dotenv
 
-load_dotenv('.env')
+load_dotenv()
 
 client = pydis.Client()
 
 @client.event
-async def on_ready():
+async def on_ready() -> None:
     print("i love fortnite")
 
 @client.event
-async def on_message_create():
-    print("I love trees")
+async def on_message_create(message : pydis.Message) -> None:
+    print(message.content)
+
 
 @client.event
-async def on_message_delete():
+async def on_message_delete() -> None:
     print("Message was deleted")
 
-@client.event
-async def hi():
-    print("hi")
 
 client.run(os.getenv("TOKEN"))
 

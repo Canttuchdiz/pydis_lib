@@ -6,6 +6,10 @@ Coro = TypeVar('Coro', bound=Callable[..., Coroutine[Any, Any, Any]])
 
 class Client(DiscordWebSocket):
 
+    """
+    Inherits websocket class for run method and has event decorator for registering events
+    """
+
 
     def event(self, coro: Coro, /) -> Coro:
         """A decorator that registers an event to listen to.

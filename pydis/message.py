@@ -1,5 +1,11 @@
+import json
+
 
 class Message:
+
+    """
+    The message object which contains content, author, and channel
+    """
 
     __slots__ = (
 
@@ -11,6 +17,8 @@ class Message:
     )
 
 
-    def __init__(self, payload, content : str):
-        self._payload = payload
-        self.content : str = payload['content']
+    def __init__(self, event : str, payload):
+
+        self.content = payload["d"]["content"]
+
+
